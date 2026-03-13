@@ -133,19 +133,27 @@ See existing announcements for reference:
 
 ## Deployment to Cloudflare Pages
 
-### Option 1: Connect GitHub Repository
+### Build Configuration
+
+| Setting | Value |
+|---------|-------|
+| **Framework preset** | Next.js |
+| **Build command** | `npm run build` |
+| **Build output directory** | `.next` |
+| **Node.js version** | 18.x or 20.x |
+
+### Option 1: Connect GitHub Repository (Recommended)
 
 1. Push your code to GitHub
 2. Go to [Cloudflare Pages](https://pages.cloudflare.com/)
-3. Click "Create a project" → "Connect to Git"
+3. Click **Create a project** → **Connect to Git**
 4. Select your repository
-5. Configure build settings:
-   - **Framework preset**: Next.js
-   - **Build command**: `npm run build`
-   - **Build output directory**: `.next`
-6. Deploy!
+5. Configure build settings (see table above)
+6. Click **Save and Deploy**
 
-### Option 2: Direct Upload
+Cloudflare will automatically rebuild on every push to `main`.
+
+### Option 2: Direct Upload via CLI
 
 ```bash
 # Build the project
@@ -157,16 +165,88 @@ npm install -g wrangler
 # Login to Cloudflare
 wrangler login
 
-# Deploy
+# Deploy using next-on-pages
 npx @cloudflare/next-on-pages
 wrangler pages deploy .vercel/output/static
 ```
 
 ### Environment Variables
 
-For production, you may want to set:
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `NODE_ENV` | No | Set automatically to `production` by Cloudflare |
 
-- `NODE_ENV=production`
+No additional environment variables are required. The site works out of the box.
+
+**Optional variables for future features:**
+
+| Variable | Purpose |
+|----------|---------|
+| `SENDGRID_API_KEY` | Enable email delivery for contact form |
+| `RESEND_API_KEY` | Alternative email service |
+
+Set environment variables in Cloudflare Dashboard: **Pages** → **Your Project** → **Settings** → **Environment Variables**
+
+### Build Output
+
+After running `npm run build`, you should see:
+
+```
+Route (app)                              Revalidate
+┌ ○ /                                    
+├ ○ /about
+├ ○ /announcements
+├ ● /announcements/[slug]                
+├ ƒ /api/contact                         
+├ ○ /contact
+├ ○ /donate
+└ ○ /prayer-times                        1h
+
+○  (Static)   prerendered as static HTML
+●  (SSG)      uses generateStaticParams
+ƒ  (Dynamic)  server-rendered on demand
+```
+
+- **Static pages** (`○`): Pre-rendered at build time, served instantly from CDN
+- **SSG pages** (`●`): Generated for each announcement slug at build time
+- **Dynamic routes** (`ƒ`): Server-side rendered (contact form API)
+
+### How Prayer Times Work
+
+The prayer times page uses **Incremental Static Regeneration (ISR)**:
+
+1. **First request**: Next.js fetches prayer times from AlAdhan API and caches the response
+2. **Subsequent requests**: Cached page is served instantly from Cloudflare's edge
+3. **After 1 hour**: Cache is invalidated, next request triggers a fresh API call
+
+**API Details:**
+- **Endpoint**: `https://api.aladhan.com/v1/timingsByCity`
+- **Location**: Ankeny, Iowa, US
+- **Method**: ISNA (Islamic Society of North America)
+- **No API key required**: AlAdhan is a free, public API
+
+**Client-side enhancements:**
+- Session storage caches prayer times in the browser
+- Next prayer indicator updates in real-time
+- Manual refresh button for users
+
+Since the API call happens server-side during ISR, there are no CORS issues and the user's browser never directly contacts AlAdhan—improving privacy and performance.
+
+### Troubleshooting
+
+**Build fails with "out of memory":**
+```bash
+# Set Node memory limit
+NODE_OPTIONS=--max_old_space_size=4096 npm run build
+```
+
+**Prayer times not updating:**
+- ISR revalidates every hour; this is expected behavior
+- Users can click the refresh button for immediate update
+
+**Contact form 500 errors in production:**
+- Check that the API route is deployed (should show as `ƒ` in build output)
+- Verify Cloudflare Functions are enabled for your project
 
 ## Contact Form
 
