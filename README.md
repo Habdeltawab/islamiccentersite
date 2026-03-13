@@ -73,30 +73,63 @@ npm run build
 
 ## Adding Announcements
 
-Announcements are stored in `/src/lib/announcements.ts`. To add a new announcement:
+Announcements are stored as Markdown files in `/content/announcements/`. Each file uses YAML frontmatter for metadata.
 
-1. Open `src/lib/announcements.ts`
-2. Add a new object to the `announcements` array:
+### Steps to Add an Announcement
 
-```typescript
-{
-  slug: "your-announcement-slug",
-  title: "Your Announcement Title",
-  date: "2026-03-15",
-  excerpt: "A brief description of the announcement.",
-  content: `
-# Your Announcement Title
+1. Create a new `.md` file in `content/announcements/`
+2. Use a kebab-case filename that matches your slug (e.g., `my-new-event.md`)
+3. Add YAML frontmatter and Markdown content:
+
+```markdown
+---
+title: "Your Announcement Title"
+date: "2026-03-15"
+slug: "my-new-event"
+category: "Events"
+excerpt: "A brief summary shown on the announcements list page."
+---
 
 Full content of your announcement in Markdown format.
 
-## Subheading
+## Schedule
+
+| Time | Activity |
+|------|----------|
+| 9:00 AM | Start |
+| 12:00 PM | Break |
+
+## Details
 
 - Bullet point 1
 - Bullet point 2
-  `,
-  category: "General", // Optional: Prayer, Education, Events, Ramadan, etc.
-}
+
+For questions, contact us at [info@example.com](mailto:info@example.com).
 ```
+
+### Frontmatter Fields
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `title` | Yes | The announcement title |
+| `date` | Yes | Publication date (YYYY-MM-DD format) |
+| `slug` | Yes | URL slug (must match filename without `.md`) |
+| `category` | No | Category: Prayer, Education, Events, Ramadan, etc. |
+| `excerpt` | No | Short summary for list pages |
+
+### Supported Markdown
+
+- Headings (`## h2`, `### h3`)
+- Lists (bullets with `-` or `*`, numbered with `1.`)
+- Tables (pipe-separated with header row)
+- Bold (`**text**`) and italic (`*text*` or `_text_`)
+- Links (`[text](url)`)
+
+### Example Files
+
+See existing announcements for reference:
+- `content/announcements/ramadan-2026-schedule.md`
+- `content/announcements/friday-prayer-update.md`
 
 ## Deployment to Cloudflare Pages
 
