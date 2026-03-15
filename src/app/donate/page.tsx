@@ -3,8 +3,8 @@ import { Hero, Section, Card, CardGrid, Button } from "@/components/ui";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Donate | Islamic Center of Ankeny",
-  description: "Support the Islamic Center of Ankeny with your generous donations.",
+  title: "Donate | Ankeny Muslim Community Center",
+  description: "Support the Ankeny Muslim Community Center with your generous donations.",
 };
 
 const supportAreas = [
@@ -61,7 +61,7 @@ export default function DonatePage() {
         subtitle="Support Our Mission"
         title="Your Generosity Makes a Difference"
         description="Your donations help us maintain our facilities, expand our programs, and serve the Muslim community in Ankeny."
-        primaryAction={{ label: "Donate Now", href: "https://givebutter.com/islamic-center-ankeny" }}
+        primaryAction={{ label: "Donate Now", href: "https://givebutter.com/general-fund-trkag5" }}
         size="md"
       />
 
@@ -78,7 +78,7 @@ export default function DonatePage() {
               directly supports our programs, facilities, and community services.
             </p>
             <Button
-              href="https://givebutter.com/islamic-center-ankeny"
+              href="https://givebutter.com/general-fund-trkag5"
               variant="primary"
               size="lg"
               external
@@ -157,7 +157,7 @@ export default function DonatePage() {
             <div className="text-3xl mb-3">📧</div>
             <h3 className="font-semibold text-gray-900 mb-2">Check by Mail</h3>
             <p className="text-gray-600 text-sm">
-              Make checks payable to &quot;Islamic Center of Ankeny&quot; and mail to our address.
+              Make checks payable to &quot;Ankeny Muslim Community Center&quot; and mail to our address.
             </p>
           </Card>
           <Card variant="bordered" className="text-center">
@@ -182,7 +182,7 @@ export default function DonatePage() {
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Tax-Deductible Donations</h2>
           <p className="text-gray-600">
-            The Islamic Center of Ankeny is a registered 501(c)(3) non-profit organization. 
+            The Ankeny Muslim Community Center is a registered 501(c)(3) non-profit organization. 
             All donations are tax-deductible to the extent allowed by law. 
             You will receive a receipt for your tax records.
           </p>

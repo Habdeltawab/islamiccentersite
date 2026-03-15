@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Hero, Section, Card, CardGrid, CTA } from "@/components/ui";
 
 export const metadata: Metadata = {
-  title: "About Us | Islamic Center of Ankeny",
-  description: "Learn about the Islamic Center of Ankeny, our mission, history, and services.",
+  title: "About Us | Ankeny Muslim Community Center",
+  description: "Learn about the Ankeny Muslim Community Center, our mission, history, and services.",
 };
 
 const services = [
@@ -97,7 +97,7 @@ export default function AboutPage() {
           <div>
             <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Mission</h2>
             <p className="text-gray-700 mb-4 leading-relaxed">
-              The Islamic Center of Ankeny is dedicated to serving the Muslim community in 
+              The Ankeny Muslim Community Center is dedicated to serving the Muslim community in 
               Ankeny, Iowa and surrounding areas. We strive to provide a welcoming space for 
               worship, education, and community building, fostering understanding and 
               cooperation among all people.

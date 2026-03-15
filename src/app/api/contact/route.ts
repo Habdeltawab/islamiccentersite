@@ -220,8 +220,8 @@ function getClientIdentifier(request: Request): string {
  * 
  * async function sendContactEmail(submission: ContactSubmission): Promise<void> {
  *   await sgMail.send({
- *     to: "contact@islamiccenterankeny.org",
- *     from: "noreply@islamiccenterankeny.org",
+ *     to: "info@ankenymuslimcommunity.org",
+ *     from: "noreply@ankenymuslimcommunity.org",
  *     replyTo: submission.email,
  *     subject: `[Contact Form] ${submission.subject} from ${submission.name}`,
  *     text: `Name: ${submission.name}\nEmail: ${submission.email}\n\n${submission.message}`,
@@ -241,8 +241,8 @@ function getClientIdentifier(request: Request): string {
  * 
  * async function sendContactEmail(submission: ContactSubmission): Promise<void> {
  *   await resend.emails.send({
- *     from: "Islamic Center <noreply@islamiccenterankeny.org>",
- *     to: ["contact@islamiccenterankeny.org"],
+ *     from: "AMCC <noreply@ankenymuslimcommunity.org>",
+ *     to: ["info@ankenymuslimcommunity.org"],
  *     reply_to: submission.email,
  *     subject: `[Contact Form] ${submission.subject}`,
  *     text: `From: ${submission.name}\n\n${submission.message}`,

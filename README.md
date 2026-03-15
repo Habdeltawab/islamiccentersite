@@ -1,6 +1,6 @@
-# Islamic Center of Ankeny Website
+# Ankeny Muslim Community Center Website
 
-A modern, static website for the Islamic Center of Ankeny, built with Next.js, TypeScript, and Tailwind CSS.
+A modern, static website for the Ankeny Muslim Community Center, built with Next.js, TypeScript, and Tailwind CSS.
 
 ## Features
 
@@ -104,7 +104,7 @@ Full content of your announcement in Markdown format.
 - Bullet point 1
 - Bullet point 2
 
-For questions, contact us at [info@example.com](mailto:info@example.com).
+For questions, contact us at [info@ankenymuslimcommunity.org](mailto:info@ankenymuslimcommunity.org).
 ```
 
 ### Frontmatter Fields
@@ -270,8 +270,8 @@ To change the location or method, edit `/src/app/prayer-times/page.tsx`.
 
 ## License
 
-This project is private and intended for the Islamic Center of Ankeny.
+This project is private and intended for the Ankeny Muslim Community Center.
 
 ## Contributing
 
-Please contact the Islamic Center of Ankeny administration for contribution guidelines.
+Please contact the Ankeny Muslim Community Center administration for contribution guidelines.

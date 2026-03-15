@@ -15,8 +15,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Islamic Center of Ankeny",
+  title: "Ankeny Muslim Community Center",
   description: "Serving the Muslim community in Ankeny, Iowa with prayer services, educational programs, and community events.",
+  icons: {
+    icon: "/amcc-icon.svg",
+    apple: "/amcc-icon.svg",
+  },
 };
 
 export default function RootLayout({

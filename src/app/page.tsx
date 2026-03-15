@@ -36,22 +36,18 @@ const services = [
 
 const features = [
   {
-    icon: "🕐",
+    icon: "�",
     title: "Prayer Times",
-    description: "Accurate daily prayer times for Ankeny, IA updated automatically.",
+    description: "View accurate daily prayer times for Ankeny, IA. Stay connected with your daily Salah schedule.",
     href: "/prayer-times",
+    color: "emerald",
   },
   {
-    icon: "📢",
-    title: "Announcements",
-    description: "Stay updated with the latest news and events from our community.",
-    href: "/announcements",
-  },
-  {
-    icon: "💰",
-    title: "Donate",
-    description: "Support our mission with your generous Zakat, Sadaqah, or general donations.",
+    icon: "❤️",
+    title: "Support Our Center",
+    description: "Your generous Zakat, Sadaqah, and donations help us serve our community and maintain our programs.",
     href: "/donate",
+    color: "amber",
   },
 ];
 
@@ -61,7 +57,7 @@ export default function Home() {
       {/* Hero Section */}
       <Hero
         subtitle="Welcome to"
-        title="Islamic Center of Ankeny"
+        title="Ankeny Muslim Community Center"
         description="A place of worship, learning, and community for Muslims in Ankeny, Iowa. Join us in building a stronger, united community."
         primaryAction={{ label: "Prayer Times", href: "/prayer-times" }}
         secondaryAction={{ label: "Learn More", href: "/about" }}
@@ -70,19 +66,39 @@ export default function Home() {
 
       {/* Quick Access Cards */}
       <Section background="gray" padding="lg">
-        <CardGrid columns={3}>
+        <div className="text-center mb-10">
+          <h2 className="text-3xl font-bold text-gray-900 mb-3">Quick Links</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">Access our most important resources</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {features.map((feature) => (
-            <Card
+            <a
               key={feature.title}
-              icon={feature.icon}
-              title={feature.title}
-              description={feature.description}
               href={feature.href}
-              variant="elevated"
-              className="text-center"
-            />
+              className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100"
+            >
+              <div className={`w-16 h-16 rounded-xl flex items-center justify-center text-3xl mb-5 ${
+                feature.color === 'emerald' 
+                  ? 'bg-emerald-100 group-hover:bg-emerald-200' 
+                  : 'bg-amber-100 group-hover:bg-amber-200'
+              } transition-colors`}>
+                {feature.icon}
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-emerald-700 transition-colors">
+                {feature.title}
+              </h3>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                {feature.description}
+              </p>
+              <span className="inline-flex items-center text-emerald-600 font-medium group-hover:text-emerald-700">
+                Learn more 
+                <svg className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </span>
+            </a>
           ))}
-        </CardGrid>
+        </div>
       </Section>
 
       {/* Services Section */}
@@ -117,7 +133,7 @@ export default function Home() {
               Building a Strong Muslim Community
             </h2>
             <p className="text-gray-700 mb-6 leading-relaxed">
-              The Islamic Center of Ankeny is dedicated to serving the Muslim community 
+              The Ankeny Muslim Community Center is dedicated to serving the Muslim community 
               in Ankeny, Iowa and surrounding areas. We strive to provide a welcoming 
               space for worship, education, and community building.
             </p>
