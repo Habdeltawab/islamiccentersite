@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import GivebutterButton from "./GivebutterButton";
 
 export const metadata: Metadata = {
   title: "Donate | Ankeny Muslim Community Center",
@@ -67,41 +68,6 @@ function CheckIcon({ className }: { className?: string }) {
 
 /* ── Payment methods data ── */
 
-const paymentMethods = [
-  {
-    name: "Givebutter",
-    description: "Secure online donations with credit/debit card",
-    detail: "Tip: Turn off both \"Tip Givebutter\" and \"Cover processing fees\" to keep 100% of your donation.",
-    href: "https://givebutter.com/Amcc-general",
-    color: "amber",
-    Logo: GivebutterLogo,
-  },
-  {
-    name: "Zelle",
-    description: "Send directly from your bank app",
-    detail: "515-708-7127",
-    href: null,
-    color: "purple",
-    Logo: ZelleLogo,
-  },
-  {
-    name: "Venmo",
-    description: "Quick and easy mobile payments",
-    detail: "@Ankeny-mcc",
-    href: "https://venmo.com/Ankeny-mcc",
-    color: "blue",
-    Logo: VenmoLogo,
-  },
-  {
-    name: "Cash App",
-    description: "Fast mobile transfers",
-    detail: "$AnkenyMcc",
-    href: "https://cash.app/$AnkenyMcc",
-    color: "green",
-    Logo: CashAppLogo,
-  },
-];
-
 const colorMap: Record<string, { bg: string; border: string; badge: string; hover: string }> = {
   amber:  { bg: "bg-amber-50",  border: "border-amber-200",  badge: "bg-amber-100 text-amber-800",   hover: "hover:border-amber-300 hover:shadow-md" },
   purple: { bg: "bg-purple-50", border: "border-purple-200", badge: "bg-purple-100 text-purple-800", hover: "hover:border-purple-300 hover:shadow-md" },
@@ -146,12 +112,7 @@ export default function DonatePage() {
           </div>
 
           {/* Primary CTA — Givebutter */}
-          <a
-            href="https://givebutter.com/Amcc-general"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block rounded-2xl mb-6 overflow-hidden shadow-lg hover:shadow-2xl transition-all group relative"
-          >
+          <GivebutterButton>
             {/* Background */}
             <div className="bg-gradient-to-br from-[#FFBF00] via-[#FFD54F] to-[#FFBF00] p-7 pb-5">
               <div className="flex items-center justify-between">
@@ -180,7 +141,7 @@ export default function DonatePage() {
                 </p>
               </div>
             </div>
-          </a>
+          </GivebutterButton>
 
           {/* Other Methods Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
