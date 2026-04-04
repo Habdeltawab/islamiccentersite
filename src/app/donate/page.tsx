@@ -249,6 +249,20 @@ export default function DonatePage() {
               </p>
             </div>
           </div>
+
+          {/* Download Donation Form */}
+          <div className="mt-6 text-center">
+            <a
+              href="/donation-form.pdf"
+              download="AMCC-Donation-Form.pdf"
+              className="inline-flex items-center space-x-2 bg-slate-900 text-white px-6 py-3 rounded-lg font-medium hover:bg-slate-800 transition-colors shadow-sm"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a2 2 0 002 2h14a2 2 0 002-2v-3" />
+              </svg>
+              <span>Download Donation Form (PDF)</span>
+            </a>
+          </div>
         </div>
       </div>
 
