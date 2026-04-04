@@ -3,17 +3,6 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace JSX {
-    interface IntrinsicElements {
-      "givebutter-widget": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement> & { id: string },
-        HTMLElement
-      >;
-    }
-  }
-}
 
 export default function GivebutterButton({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
