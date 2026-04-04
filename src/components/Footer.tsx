@@ -82,13 +82,13 @@ export default function Footer() {
               Contact Us
             </h3>
             <div className="space-y-4 text-sm">
-              <div className="flex items-start space-x-3">
+              <a href="https://maps.google.com/?q=110+SE+Grant+St+Ankeny+IA+50021" target="_blank" rel="noopener noreferrer" className="flex items-start space-x-3 group">
                 <span className="text-emerald-400 mt-0.5">📍</span>
-                <div className="text-gray-400">
-                  <p>Ankeny Muslim Community Center</p>
-                  <p>Ankeny, Iowa 50021</p>
+                <div className="text-gray-400 group-hover:text-white transition-colors">
+                  <p>110 SE Grant St, Suite 104</p>
+                  <p>Ankeny, IA 50021</p>
                 </div>
-              </div>
+              </a>
               <div className="flex items-center space-x-3">
                 <span className="text-emerald-400">📧</span>
                 <a 

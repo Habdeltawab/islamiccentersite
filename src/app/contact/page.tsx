@@ -21,6 +21,14 @@ export default function ContactPage() {
           <p className="mt-6 text-lg text-slate-300 max-w-2xl">
             We welcome your questions, feedback, and inquiries. Reach out to us through any of the channels below.
           </p>
+          <a
+            href="https://maps.google.com/?q=110+SE+Grant+St+Ankeny+IA+50021"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-block text-lg font-medium text-white underline underline-offset-4 decoration-emerald-400 hover:decoration-white transition-colors"
+          >
+            📍 110 SE Grant St, Ankeny, IA 50021 — Suite 104
+          </a>
         </div>
       </div>
 
@@ -82,10 +90,16 @@ export default function ContactPage() {
             <h3 className="text-xl font-semibold text-slate-900 mb-2">
               Ankeny Muslim Community Center
             </h3>
-            <p className="text-slate-600 mb-6">
-              Ankeny, Iowa 50021
-            </p>
-            <p className="text-sm text-slate-500">
+            <a
+              href="https://maps.google.com/?q=110+SE+Grant+St+Ankeny+IA+50021"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-emerald-600 hover:text-emerald-700 underline underline-offset-2 font-medium"
+            >
+              110 SE Grant St, Suite 104<br />
+              Ankeny, IA 50021
+            </a>
+            <p className="text-sm text-slate-500 mt-6">
               Our center serves the Muslim community in Ankeny and the greater Des Moines area.
             </p>
           </div>

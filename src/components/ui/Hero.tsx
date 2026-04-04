@@ -4,6 +4,7 @@ interface HeroProps {
   title: string;
   subtitle?: string;
   description?: string;
+  address?: string;
   primaryAction?: {
     label: string;
     href: string;
@@ -27,6 +28,7 @@ export default function Hero({
   title,
   subtitle,
   description,
+  address,
   primaryAction,
   secondaryAction,
   backgroundClass = "bg-gradient-to-br from-emerald-800 to-emerald-900",
@@ -57,6 +59,17 @@ export default function Hero({
           <p className={`text-xl md:text-2xl text-emerald-100 mb-8 leading-relaxed ${centered ? "max-w-3xl mx-auto" : "max-w-2xl"}`}>
             {description}
           </p>
+        )}
+
+        {address && (
+          <a
+            href={`https://maps.google.com/?q=${encodeURIComponent(address)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`inline-block text-lg font-medium text-white mb-8 underline underline-offset-4 decoration-emerald-300 hover:decoration-white transition-colors ${centered ? "mx-auto" : ""}`}
+          >
+            📍 {address}
+          </a>
         )}
         
         {(primaryAction || secondaryAction) && (

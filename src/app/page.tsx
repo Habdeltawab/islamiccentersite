@@ -59,6 +59,7 @@ export default function Home() {
         subtitle="Welcome to"
         title="Ankeny Muslim Community Center"
         description="A place of worship, learning, and community for Muslims in Ankeny, Iowa. Join us in building a stronger, united community."
+        address="110 SE Grant St, Ankeny, IA 50021 — Suite 104"
         primaryAction={{ label: "Prayer Times", href: "/prayer-times" }}
         secondaryAction={{ label: "Learn More", href: "/about" }}
         size="lg"

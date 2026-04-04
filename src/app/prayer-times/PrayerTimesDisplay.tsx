@@ -9,7 +9,6 @@ import {
   getCachedPrayerTimes,
   cachePrayerTimes,
   getDateKey,
-  formatTime12Hour,
   getNextPrayer,
   getTimeUntil,
 } from "@/lib/prayer-times";
@@ -49,7 +48,7 @@ export default function PrayerTimesDisplay({ initialData }: PrayerTimesDisplayPr
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-      const data = await fetchPrayerTimes(today, controller.signal);
+      const data = await fetchPrayerTimes(controller.signal);
       clearTimeout(timeoutId);
 
       setPrayerData(data);
@@ -68,28 +67,38 @@ export default function PrayerTimesDisplay({ initialData }: PrayerTimesDisplayPr
   }, []);
 
   useEffect(() => {
-    if (!initialData && loadingState === "idle") {
-      let mounted = true;
-      const load = async () => {
-        if (mounted) {
-          await loadPrayerTimes();
-        }
-      };
-      load();
-      return () => {
-        mounted = false;
-      };
+    let cancelled = false;
+
+    if (loadingState === "idle") {
+      const timer = setTimeout(() => {
+        if (!cancelled) loadPrayerTimes();
+      }, 0);
+      return () => { cancelled = true; clearTimeout(timer); };
     }
+
+    // If we have initial data, check if it's still for today
+    if (initialData && loadingState === "success") {
+      const today = new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "short", day: "numeric" });
+      if (initialData.salah.date !== today) {
+        const timer = setTimeout(() => {
+          if (!cancelled) loadPrayerTimes(true);
+        }, 0);
+        return () => { cancelled = true; clearTimeout(timer); };
+      }
+    }
+
+    return () => { cancelled = true; };
   }, [initialData, loadingState, loadPrayerTimes]);
 
   useEffect(() => {
     if (!prayerData) return;
 
     const updateNextPrayer = () => {
-      const next = getNextPrayer(prayerData.timings);
+      const next = getNextPrayer(prayerData.salah);
       setNextPrayer(next);
       if (next) {
-        setTimeUntilNext(getTimeUntil(prayerData.timings[next]));
+        const salahKey = PRAYER_INFO[next].salahKey;
+        setTimeUntilNext(getTimeUntil(prayerData.salah[salahKey]));
       }
     };
 
@@ -127,25 +136,27 @@ export default function PrayerTimesDisplay({ initialData }: PrayerTimesDisplayPr
     );
   }
 
-  const prayers: { name: PrayerName; time: string }[] = [
-    { name: "Fajr", time: prayerData.timings.Fajr },
-    { name: "Sunrise", time: prayerData.timings.Sunrise },
-    { name: "Dhuhr", time: prayerData.timings.Dhuhr },
-    { name: "Asr", time: prayerData.timings.Asr },
-    { name: "Maghrib", time: prayerData.timings.Maghrib },
-    { name: "Isha", time: prayerData.timings.Isha },
+  const { salah, iqamah } = prayerData;
+
+  const prayers: { name: PrayerName; adhan: string; iqamah: string | null }[] = [
+    { name: "Fajr", adhan: salah.fajr, iqamah: iqamah.fajr },
+    { name: "Sunrise", adhan: salah.sunrise, iqamah: null },
+    { name: "Dhuhr", adhan: salah.zuhr, iqamah: iqamah.zuhr },
+    { name: "Asr", adhan: salah.asr, iqamah: iqamah.asr },
+    { name: "Maghrib", adhan: salah.maghrib, iqamah: iqamah.maghrib },
+    { name: "Isha", adhan: salah.isha, iqamah: iqamah.isha },
   ];
+
+  const hasJummah = iqamah.jummah1 && iqamah.jummah1 !== "-";
 
   return (
     <div className="space-y-6">
       {/* Date Header */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-2xl font-semibold text-slate-900">{prayerData.date.readable}</p>
+          <p className="text-2xl font-semibold text-slate-900">{salah.date}</p>
           <p className="text-sm text-slate-500 mt-0.5">
-            <span className="font-arabic">{prayerData.date.hijri.day} {prayerData.date.hijri.month.ar}</span>
-            <span className="mx-1.5 text-slate-300">•</span>
-            <span>{prayerData.date.hijri.day} {prayerData.date.hijri.month.en} {prayerData.date.hijri.year} AH</span>
+            {salah.hijri_date} {salah.hijri_month}
           </p>
         </div>
         <button
@@ -170,7 +181,10 @@ export default function PrayerTimesDisplay({ initialData }: PrayerTimesDisplayPr
               <p className="text-sm text-slate-400 font-arabic mt-0.5">{PRAYER_INFO[nextPrayer].arabic}</p>
             </div>
             <div className="text-right">
-              <p className="text-3xl font-semibold text-white tabular-nums">{formatTime12Hour(prayerData.timings[nextPrayer])}</p>
+              <p className="text-3xl font-semibold text-white tabular-nums">{salah[PRAYER_INFO[nextPrayer].salahKey]}</p>
+              {PRAYER_INFO[nextPrayer].iqamahKey && (
+                <p className="text-sm text-slate-400 mt-0.5">Iqamah: {iqamah[PRAYER_INFO[nextPrayer].iqamahKey]}</p>
+              )}
               <p className="text-sm text-emerald-400 mt-1">in {timeUntilNext}</p>
             </div>
           </div>
@@ -183,17 +197,18 @@ export default function PrayerTimesDisplay({ initialData }: PrayerTimesDisplayPr
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50">
               <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Prayer</th>
-              <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Time</th>
+              <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Adhan</th>
+              <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider px-5 py-3">Iqamah</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {prayers.map((prayer) => {
               const isNext = prayer.name === nextPrayer;
               const isSunrise = prayer.name === "Sunrise";
-              
+
               return (
-                <tr 
-                  key={prayer.name} 
+                <tr
+                  key={prayer.name}
                   className={`${isNext ? "bg-emerald-50" : ""} ${isSunrise ? "text-slate-400" : ""}`}
                 >
                   <td className="px-5 py-4">
@@ -216,10 +231,21 @@ export default function PrayerTimesDisplay({ initialData }: PrayerTimesDisplayPr
                     <p className={`text-lg font-medium tabular-nums ${
                       isNext ? "text-emerald-700" : isSunrise ? "text-slate-400" : "text-slate-900"
                     }`}>
-                      {formatTime12Hour(prayer.time)}
+                      {prayer.adhan}
                     </p>
                     {isNext && (
                       <p className="text-xs text-emerald-600 mt-0.5">in {timeUntilNext}</p>
+                    )}
+                  </td>
+                  <td className="px-5 py-4 text-right">
+                    {prayer.iqamah ? (
+                      <p className={`text-lg font-medium tabular-nums ${
+                        isNext ? "text-emerald-700" : "text-slate-700"
+                      }`}>
+                        {prayer.iqamah}
+                      </p>
+                    ) : (
+                      <p className="text-sm text-slate-300">—</p>
                     )}
                   </td>
                 </tr>
@@ -235,6 +261,22 @@ export default function PrayerTimesDisplay({ initialData }: PrayerTimesDisplayPr
           Updated {lastUpdated.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
         </p>
       )}
+
+      {/* Jumu'ah Notice */}
+      <div className="bg-amber-50 border border-amber-200 rounded-lg px-5 py-4 text-center">
+        <p className="text-sm text-amber-800">
+          {hasJummah ? (
+            <>
+              <span className="font-medium">Jumu&apos;ah Prayer:</span> {iqamah.jummah1}
+              {iqamah.jummah2 && iqamah.jummah2 !== "-" && ` • 2nd: ${iqamah.jummah2}`}
+            </>
+          ) : (
+            <>
+              <span className="font-medium">Note:</span> We currently do not offer Jumu&apos;ah (Friday) prayer at this location.
+            </>
+          )}
+        </p>
+      </div>
     </div>
   );
 }
@@ -242,7 +284,6 @@ export default function PrayerTimesDisplay({ initialData }: PrayerTimesDisplayPr
 function PrayerTimesSkeleton() {
   return (
     <div className="space-y-6 animate-pulse">
-      {/* Date header */}
       <div className="flex items-center justify-between">
         <div className="space-y-2">
           <div className="h-7 bg-slate-200 rounded w-40" />
@@ -250,15 +291,12 @@ function PrayerTimesSkeleton() {
         </div>
         <div className="h-5 bg-slate-100 rounded w-16" />
       </div>
-
-      {/* Next prayer card */}
       <div className="bg-slate-200 rounded-lg h-24" />
-
-      {/* Table skeleton */}
       <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
         <div className="bg-slate-50 border-b border-slate-200 px-5 py-3">
           <div className="flex justify-between">
             <div className="h-3 bg-slate-200 rounded w-12" />
+            <div className="h-3 bg-slate-200 rounded w-8" />
             <div className="h-3 bg-slate-200 rounded w-8" />
           </div>
         </div>
@@ -272,6 +310,7 @@ function PrayerTimesSkeleton() {
                   <div className="h-3 bg-slate-100 rounded w-10" />
                 </div>
               </div>
+              <div className="h-5 bg-slate-200 rounded w-16" />
               <div className="h-5 bg-slate-200 rounded w-16" />
             </div>
           ))}

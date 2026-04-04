@@ -1,105 +1,68 @@
-// AlAdhan API types and utilities
-// Docs: https://aladhan.com/prayer-times-api
+// MasjidAl API types and utilities
 
-export interface PrayerTimings {
-  Fajr: string;
-  Sunrise: string;
-  Dhuhr: string;
-  Asr: string;
-  Sunset: string;
-  Maghrib: string;
-  Isha: string;
-  Imsak: string;
-  Midnight: string;
-  Firstthird: string;
-  Lastthird: string;
-}
+export const MASJID_ID = "0LbnoaLo";
 
-export interface HijriDate {
-  date: string;
-  format: string;
-  day: string;
-  weekday: { en: string; ar: string };
-  month: { number: number; en: string; ar: string };
-  year: string;
-  designation: { abbreviated: string; expanded: string };
-  holidays: string[];
-}
-
-export interface GregorianDate {
-  date: string;
-  format: string;
-  day: string;
-  weekday: { en: string };
-  month: { number: number; en: string };
-  year: string;
-  designation: { abbreviated: string; expanded: string };
-}
-
-export interface PrayerTimesData {
-  timings: PrayerTimings;
-  date: {
-    readable: string;
-    timestamp: string;
-    hijri: HijriDate;
-    gregorian: GregorianDate;
-  };
-  meta: {
-    latitude: number;
-    longitude: number;
-    timezone: string;
-    method: {
-      id: number;
-      name: string;
-      params: { Fajr: number; Isha: number };
-      location: { latitude: number; longitude: number };
-    };
-    latitudeAdjustmentMethod: string;
-    midnightMode: string;
-    school: string;
-    offset: Record<string, number>;
-  };
-}
-
-export interface AlAdhanResponse {
-  code: number;
-  status: string;
-  data: PrayerTimesData;
-}
-
-// Ankeny, Iowa coordinates
-export const ANKENY_COORDS = {
-  latitude: 41.7318,
-  longitude: -93.6001,
-  timezone: "America/Chicago",
+export const MASJID_INFO = {
   city: "Ankeny",
   state: "Iowa",
 };
 
-// Calculation methods from AlAdhan API
-export const CALCULATION_METHODS = {
-  SHIA_ITHNA_ASHARI: 0,
-  UNIVERSITY_OF_ISLAMIC_SCIENCES_KARACHI: 1,
-  ISNA: 2, // Islamic Society of North America
-  MWL: 3, // Muslim World League
-  UMM_AL_QURA: 4,
-  EGYPTIAN: 5,
-  INSTITUTE_OF_GEOPHYSICS_TEHRAN: 7,
-  GULF_REGION: 8,
-  KUWAIT: 9,
-  QATAR: 10,
-  MAJLIS_UGAMA_ISLAM_SINGAPURA: 11,
-  UNION_DES_ORGANISATIONS_ISLAMIQUES_DE_FRANCE: 12,
-  DIYANET_ISLERI_BASKANLIGI: 13,
-  SPIRITUAL_ADMINISTRATION_OF_MUSLIMS_RUSSIA: 14,
-  MOONSIGHTING_COMMITTEE_WORLDWIDE: 15,
+// --- Types ---
+
+export interface MasjidAlSalah {
+  date: string;
+  hijri_date: string;
+  hijri_month: string;
+  day: string;
+  fajr: string;
+  sunrise: string;
+  zuhr: string;
+  asr: string;
+  maghrib: string;
+  isha: string;
+}
+
+export interface MasjidAlIqamah {
+  date: string;
+  fajr: string;
+  zuhr: string;
+  asr: string;
+  maghrib: string;
+  isha: string;
+  jummah1: string;
+  jummah2: string;
+}
+
+export interface MasjidAlResponse {
+  status: string;
+  data: {
+    salah: MasjidAlSalah[];
+    iqamah: MasjidAlIqamah[];
+  };
+  message: string[];
+}
+
+export interface PrayerTimesData {
+  salah: MasjidAlSalah;
+  iqamah: MasjidAlIqamah;
+}
+
+// --- Prayer metadata ---
+
+export const PRAYER_INFO = {
+  Fajr: { arabic: "الفجر", salahKey: "fajr" as const, iqamahKey: "fajr" as const },
+  Sunrise: { arabic: "الشروق", salahKey: "sunrise" as const, iqamahKey: null },
+  Dhuhr: { arabic: "الظهر", salahKey: "zuhr" as const, iqamahKey: "zuhr" as const },
+  Asr: { arabic: "العصر", salahKey: "asr" as const, iqamahKey: "asr" as const },
+  Maghrib: { arabic: "المغرب", salahKey: "maghrib" as const, iqamahKey: "maghrib" as const },
+  Isha: { arabic: "العشاء", salahKey: "isha" as const, iqamahKey: "isha" as const },
 } as const;
 
-// Use ISNA method (common in North America)
-export const DEFAULT_METHOD = CALCULATION_METHODS.ISNA;
+export type PrayerName = keyof typeof PRAYER_INFO;
 
-// Cache key for session storage
-const CACHE_KEY = "prayer_times_cache";
+// --- Cache ---
+
+const CACHE_KEY = "prayer_times_masjidal";
 const CACHE_EXPIRY_MS = 60 * 60 * 1000; // 1 hour
 
 interface CachedData {
@@ -108,25 +71,24 @@ interface CachedData {
   dateKey: string;
 }
 
-/**
- * Get cached prayer times from session storage
- */
+export function getDateKey(date: Date): string {
+  return date.toISOString().split("T")[0];
+}
+
 export function getCachedPrayerTimes(dateKey: string): PrayerTimesData | null {
   if (typeof window === "undefined") return null;
-  
+
   try {
     const cached = sessionStorage.getItem(CACHE_KEY);
     if (!cached) return null;
-    
+
     const parsed: CachedData = JSON.parse(cached);
     const now = Date.now();
-    
-    // Check if cache is for today and not expired
+
     if (parsed.dateKey === dateKey && now - parsed.timestamp < CACHE_EXPIRY_MS) {
       return parsed.data;
     }
-    
-    // Clear expired cache
+
     sessionStorage.removeItem(CACHE_KEY);
     return null;
   } catch {
@@ -134,153 +96,100 @@ export function getCachedPrayerTimes(dateKey: string): PrayerTimesData | null {
   }
 }
 
-/**
- * Save prayer times to session storage cache
- */
 export function cachePrayerTimes(data: PrayerTimesData, dateKey: string): void {
   if (typeof window === "undefined") return;
-  
+
   try {
-    const cacheData: CachedData = {
-      data,
-      timestamp: Date.now(),
-      dateKey,
-    };
+    const cacheData: CachedData = { data, timestamp: Date.now(), dateKey };
     sessionStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
   } catch {
     // Ignore storage errors
   }
 }
 
-/**
- * Format date for API request (DD-MM-YYYY)
- */
-export function formatDateForApi(date: Date): string {
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = date.getFullYear();
-  return `${day}-${month}-${year}`;
-}
+// --- API ---
 
-/**
- * Get date key for caching (YYYY-MM-DD)
- */
-export function getDateKey(date: Date): string {
-  return date.toISOString().split("T")[0];
-}
-
-/**
- * Fetch prayer times from AlAdhan API
- */
 export async function fetchPrayerTimes(
-  date: Date = new Date(),
   signal?: AbortSignal
 ): Promise<PrayerTimesData> {
-  const dateStr = formatDateForApi(date);
-  const url = new URL(`https://api.aladhan.com/v1/timings/${dateStr}`);
-  
-  url.searchParams.set("latitude", String(ANKENY_COORDS.latitude));
-  url.searchParams.set("longitude", String(ANKENY_COORDS.longitude));
-  url.searchParams.set("method", String(DEFAULT_METHOD));
-  url.searchParams.set("timezone", ANKENY_COORDS.timezone);
-  
-  const response = await fetch(url.toString(), {
+  const url = `https://masjidal.com/api/v1/time/range?masjid_id=${encodeURIComponent(MASJID_ID)}`;
+
+  const response = await fetch(url, {
     signal,
-    headers: {
-      "Accept": "application/json",
-    },
+    headers: { Accept: "application/json" },
   });
-  
+
   if (!response.ok) {
-    throw new Error(`AlAdhan API error: ${response.status} ${response.statusText}`);
+    throw new Error(`MasjidAl API error: ${response.status} ${response.statusText}`);
   }
-  
-  const json: AlAdhanResponse = await response.json();
-  
-  if (json.code !== 200 || json.status !== "OK") {
-    throw new Error(`AlAdhan API returned error: ${json.status}`);
+
+  const json: MasjidAlResponse = await response.json();
+
+  if (json.status !== "success" || !json.data.salah.length || !json.data.iqamah.length) {
+    throw new Error("MasjidAl API returned no data");
   }
-  
-  return json.data;
+
+  return {
+    salah: json.data.salah[0],
+    iqamah: json.data.iqamah[0],
+  };
 }
 
-/**
- * Convert 24-hour time string to 12-hour format
- */
-export function formatTime12Hour(time24: string): string {
-  const timePart = time24.split(" ")[0]; // Remove timezone if present
-  const [hours, minutes] = timePart.split(":").map(Number);
-  const period = hours >= 12 ? "PM" : "AM";
-  const hours12 = hours % 12 || 12;
-  return `${hours12}:${String(minutes).padStart(2, "0")} ${period}`;
-}
+// --- Time utilities ---
 
 /**
- * Parse time string to minutes since midnight
+ * Parse MasjidAl time string like "5:33AM" into minutes since midnight
  */
-export function timeToMinutes(time24: string): number {
-  const timePart = time24.split(" ")[0];
-  const [hours, minutes] = timePart.split(":").map(Number);
+export function timeToMinutes(timeStr: string): number {
+  const match = timeStr.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!match) return 0;
+
+  let hours = parseInt(match[1], 10);
+  const minutes = parseInt(match[2], 10);
+  const period = match[3].toUpperCase();
+
+  if (period === "AM" && hours === 12) hours = 0;
+  if (period === "PM" && hours !== 12) hours += 12;
+
   return hours * 60 + minutes;
 }
 
-/**
- * Get current time in minutes since midnight
- */
 export function getCurrentMinutes(): number {
   const now = new Date();
   return now.getHours() * 60 + now.getMinutes();
 }
 
-/**
- * Prayer info with Arabic names
- */
-export const PRAYER_INFO = {
-  Fajr: { arabic: "الفجر", icon: "🌙" },
-  Sunrise: { arabic: "الشروق", icon: "🌅" },
-  Dhuhr: { arabic: "الظهر", icon: "☀️" },
-  Asr: { arabic: "العصر", icon: "🌤️" },
-  Maghrib: { arabic: "المغرب", icon: "🌇" },
-  Isha: { arabic: "العشاء", icon: "🌃" },
-} as const;
-
-export type PrayerName = keyof typeof PRAYER_INFO;
-
-/**
- * Get the next prayer based on current time
- */
-export function getNextPrayer(timings: PrayerTimings): PrayerName | null {
+export function getNextPrayer(salah: MasjidAlSalah): PrayerName | null {
   const currentMinutes = getCurrentMinutes();
-  const prayers: PrayerName[] = ["Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"];
-  
+  const prayers: { name: PrayerName; key: keyof MasjidAlSalah }[] = [
+    { name: "Fajr", key: "fajr" },
+    { name: "Sunrise", key: "sunrise" },
+    { name: "Dhuhr", key: "zuhr" },
+    { name: "Asr", key: "asr" },
+    { name: "Maghrib", key: "maghrib" },
+    { name: "Isha", key: "isha" },
+  ];
+
   for (const prayer of prayers) {
-    const prayerMinutes = timeToMinutes(timings[prayer]);
+    const prayerMinutes = timeToMinutes(salah[prayer.key]);
     if (prayerMinutes > currentMinutes) {
-      return prayer;
+      return prayer.name;
     }
   }
-  
-  // After Isha, next prayer is Fajr (tomorrow)
+
   return "Fajr";
 }
 
-/**
- * Get time remaining until a prayer
- */
-export function getTimeUntil(time24: string): string {
-  const prayerMinutes = timeToMinutes(time24);
+export function getTimeUntil(timeStr: string): string {
+  const prayerMinutes = timeToMinutes(timeStr);
   const currentMinutes = getCurrentMinutes();
-  
+
   let diff = prayerMinutes - currentMinutes;
-  if (diff < 0) {
-    diff += 24 * 60; // Add a day if prayer has passed
-  }
-  
+  if (diff < 0) diff += 24 * 60;
+
   const hours = Math.floor(diff / 60);
   const minutes = diff % 60;
-  
-  if (hours === 0) {
-    return `${minutes}m`;
-  }
+
+  if (hours === 0) return `${minutes}m`;
   return `${hours}h ${minutes}m`;
 }
