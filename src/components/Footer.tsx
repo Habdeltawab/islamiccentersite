@@ -107,6 +107,12 @@ export default function Footer() {
                   (515) 992-0296
                 </a>
               </div>
+              <a href="https://chat.whatsapp.com/JcHjRVFHE5NAOwL9wF1cTI" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-3 group">
+                <span className="text-emerald-400">💬</span>
+                <span className="text-gray-400 group-hover:text-white transition-colors">
+                  Join our WhatsApp Group
+                </span>
+              </a>
             </div>
           </div>
         </div>

@@ -227,6 +227,38 @@ export default function DonatePage() {
         </div>
       </div>
 
+      {/* Community Wish List */}
+      <div className="mx-auto max-w-5xl px-6 mt-12">
+        <a
+          href="https://www.myregistry.com/organization/ankeny-muslim-community-center-ankeny-ia/5368816"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-50 to-white p-8 hover:shadow-lg hover:border-indigo-300 transition-all group"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+            <div className="flex items-start space-x-5">
+              <div className="w-14 h-14 rounded-2xl bg-indigo-100 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                <svg className="w-7 h-7 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 11.25v8.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 109.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1114.625 7.5H12m0 0V21m-8.625-9.75h18c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-18c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-slate-900">Community Wish List</h3>
+                <p className="text-slate-500 mt-1 leading-relaxed max-w-lg">
+                  Browse the items our community center needs and purchase them directly. Every item makes a difference.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2 text-indigo-600 font-semibold text-sm flex-shrink-0 group-hover:translate-x-1 transition-transform">
+              <span>View Wish List</span>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </div>
+          </div>
+        </a>
+      </div>
+
       {/* Types of Donations */}
       <div className="mx-auto max-w-5xl px-6 py-20">
         <div className="text-center mb-10">
