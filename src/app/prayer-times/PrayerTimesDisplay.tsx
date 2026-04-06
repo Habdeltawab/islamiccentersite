@@ -66,29 +66,52 @@ export default function PrayerTimesDisplay({ initialData }: PrayerTimesDisplayPr
     }
   }, []);
 
+  // Load prayer times on mount (once only)
   useEffect(() => {
     let cancelled = false;
 
-    if (loadingState === "idle") {
-      const timer = setTimeout(() => {
-        if (!cancelled) loadPrayerTimes();
-      }, 0);
-      return () => { cancelled = true; clearTimeout(timer); };
-    }
-
-    // If we have initial data, check if it's still for today
-    if (initialData && loadingState === "success") {
-      const today = new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "short", day: "numeric" });
-      if (initialData.salah.date !== today) {
-        const timer = setTimeout(() => {
-          if (!cancelled) loadPrayerTimes(true);
-        }, 0);
-        return () => { cancelled = true; clearTimeout(timer); };
+    const init = async () => {
+      // If we already have initial data, check if it's for today
+      if (initialData) {
+        const today = new Date().toLocaleDateString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        });
+        if (initialData.salah.date === today) {
+          // Data is fresh, no need to fetch
+          return;
+        }
       }
-    }
+      // Either no initial data or it's stale — fetch fresh
+      if (!cancelled) {
+        await loadPrayerTimes(!initialData);
+      }
+    };
 
-    return () => { cancelled = true; };
-  }, [initialData, loadingState, loadPrayerTimes]);
+    const timer = setTimeout(init, 0);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Auto-refresh when the tab becomes visible again (e.g. next day)
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState !== "visible") return;
+      const today = new Date().toLocaleDateString("en-US", {
+        weekday: "long", year: "numeric", month: "short", day: "numeric",
+      });
+      if (prayerData && prayerData.salah.date !== today) {
+        loadPrayerTimes(true);
+      }
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, [prayerData, loadPrayerTimes]);
 
   useEffect(() => {
     if (!prayerData) return;
