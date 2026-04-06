@@ -132,14 +132,14 @@ export default function PrayerTimesDisplay({ initialData }: PrayerTimesDisplayPr
 
   if (loadingState === "error" || !prayerData) {
     return (
-      <div className="rounded-2xl border border-red-100 bg-red-50 p-6">
-        <div className="flex items-start space-x-4">
-          <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0">
-            <svg className="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-200/60 p-6">
+        <div className="flex items-start gap-4">
+          <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
+            <svg className="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
             </svg>
           </div>
-          <div className="flex-1">
+          <div>
             <h3 className="text-sm font-semibold text-red-900">Unable to load prayer times</h3>
             <p className="mt-1 text-sm text-red-600/80">{error || "An error occurred."}</p>
             <button
@@ -173,215 +173,217 @@ export default function PrayerTimesDisplay({ initialData }: PrayerTimesDisplayPr
   const countdownMins = countdownParts?.[2] || null;
 
   return (
-    <div className="space-y-8">
-      {/* Date & Refresh Row */}
-      <div className="flex items-end justify-between">
-        <div>
-          <p className="text-2xl font-bold text-slate-900 tracking-tight">{salah.date}</p>
-          <p className="text-sm text-slate-500 mt-1">{salah.hijri_date} {salah.hijri_month}</p>
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      {/* ════ LEFT COLUMN: Spotlight + Info ════ */}
+      <div className="lg:col-span-5 flex flex-col gap-5">
+        {/* Date Card */}
+        <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-200/60 p-5 sm:p-6">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">{salah.date}</p>
+              <p className="text-sm text-slate-600 mt-0.5">{salah.hijri_date} {salah.hijri_month}</p>
+            </div>
+            <button
+              onClick={() => loadPrayerTimes(true)}
+              className="group flex items-center gap-1.5 text-xs font-medium text-slate-400 hover:text-emerald-600 transition-colors mt-1"
+              title="Refresh prayer times"
+            >
+              <svg className="w-3.5 h-3.5 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182" />
+              </svg>
+              <span>Refresh</span>
+            </button>
+          </div>
         </div>
-        <button
-          onClick={() => loadPrayerTimes(true)}
-          className="group flex items-center space-x-1.5 text-xs font-medium text-slate-400 hover:text-emerald-600 transition-colors"
-          title="Refresh prayer times"
-        >
-          <svg className="w-3.5 h-3.5 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-          <span>Refresh</span>
-        </button>
-      </div>
 
-      {/* Next Prayer Spotlight */}
-      {nextPrayer && nextPrayer !== "Sunrise" && (
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 p-7 sm:p-8 shadow-lg">
-          {/* Decorative glow */}
-          <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-400/15 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-          <div className="absolute bottom-0 left-0 w-36 h-36 bg-emerald-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
-          
-          <div className="relative">
-            <div className="flex items-center space-x-2 mb-5">
-              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <p className="text-xs font-bold text-emerald-400 uppercase tracking-[0.2em]">Up Next</p>
-            </div>
-            
-            <div className="flex items-end justify-between gap-4">
-              <div>
-                <h3 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">{nextPrayer}</h3>
-                <p className="text-lg text-white/40 font-arabic mt-1">{PRAYER_INFO[nextPrayer].arabic}</p>
+        {/* Next Prayer Spotlight */}
+        {nextPrayer && nextPrayer !== "Sunrise" && (
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-950 to-emerald-800 p-5 sm:p-6 flex-1">
+            <div className="absolute top-0 right-0 w-36 h-36 bg-emerald-400/15 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+            <div className="relative h-full flex flex-col">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-[0.2em]">Up Next</p>
               </div>
-              <div className="text-right">
-                <p className="text-4xl sm:text-5xl font-extrabold text-white tabular-nums tracking-tight">
-                  {salah[PRAYER_INFO[nextPrayer].salahKey]}
-                </p>
-                {PRAYER_INFO[nextPrayer].iqamahKey && (
-                  <p className="text-sm text-white/50 font-medium mt-1.5">
-                    Iqamah · {iqamah[PRAYER_INFO[nextPrayer].iqamahKey]}
+
+              <div className="flex items-end justify-between gap-4 flex-1">
+                <div>
+                  <h3 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">{nextPrayer}</h3>
+                  <p className="text-sm text-white/70 font-arabic mt-0.5">{PRAYER_INFO[nextPrayer].arabic}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-3xl sm:text-4xl font-bold text-white tabular-nums tracking-tight">
+                    {salah[PRAYER_INFO[nextPrayer].salahKey]}
                   </p>
-                )}
+                  {PRAYER_INFO[nextPrayer].iqamahKey && (
+                    <p className="text-xs text-white/70 font-medium mt-1">
+                      Iqamah · {iqamah[PRAYER_INFO[nextPrayer].iqamahKey]}
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
 
-            {/* Countdown */}
-            <div className="mt-6 pt-6 border-t border-white/10">
-              <div className="flex items-center justify-center space-x-4">
-                {countdownHours && (
-                  <>
-                    <div className="flex flex-col items-center">
-                      <span className="text-3xl font-extrabold text-white tabular-nums">{countdownHours}</span>
-                      <span className="text-[10px] font-bold text-emerald-400/70 uppercase tracking-[0.15em] mt-1">hours</span>
-                    </div>
-                    <span className="text-2xl font-light text-white/20 -mt-5">:</span>
-                  </>
-                )}
-                <div className="flex flex-col items-center">
-                  <span className="text-3xl font-extrabold text-white tabular-nums">{countdownMins ?? "0"}</span>
-                  <span className="text-[10px] font-bold text-emerald-400/70 uppercase tracking-[0.15em] mt-1">min</span>
+              {/* Countdown */}
+              <div className="mt-5 pt-4 border-t border-white/[0.08]">
+                <div className="flex items-center justify-center gap-3">
+                  {countdownHours && (
+                    <>
+                      <div className="flex flex-col items-center">
+                        <span className="text-2xl font-bold text-white tabular-nums">{countdownHours}</span>
+                        <span className="text-[9px] font-bold text-emerald-300/60 uppercase tracking-[0.15em] mt-0.5">hours</span>
+                      </div>
+                      <span className="text-lg font-light text-white/15 -mt-4">:</span>
+                    </>
+                  )}
+                  <div className="flex flex-col items-center">
+                    <span className="text-2xl font-bold text-white tabular-nums">{countdownMins ?? "0"}</span>
+                    <span className="text-[9px] font-bold text-emerald-300/60 uppercase tracking-[0.15em] mt-0.5">min</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+        )}
+
+        {/* Jumu'ah + Meta */}
+        <div className={`rounded-2xl px-5 py-4 ${hasJummah ? "bg-white ring-1 ring-emerald-200/60 shadow-sm" : "bg-white ring-1 ring-slate-200/60 shadow-sm"}`}>
+          <div className="flex items-center gap-3">
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${hasJummah ? "bg-emerald-100" : "bg-amber-100"}`}>
+              <span className="text-sm">{hasJummah ? "🕌" : "ℹ️"}</span>
+            </div>
+            <p className={`text-sm ${hasJummah ? "text-emerald-800" : "text-amber-800"}`}>
+              {hasJummah ? (
+                <>
+                  <span className="font-semibold">Jumu&apos;ah:</span>{" "}{iqamah.jummah1}
+                  {iqamah.jummah2 && iqamah.jummah2 !== "-" && <> · 2nd: {iqamah.jummah2}</>}
+                </>
+              ) : (
+                <>
+                  <span className="font-semibold">Jumu&apos;ah:</span>{" "}Not currently offered at this location.
+                </>
+              )}
+            </p>
+          </div>
         </div>
-      )}
 
-      {/* Prayer Times Cards */}
-      <div className="grid gap-3">
-        {prayers.map((prayer) => {
-          const isNext = prayer.name === nextPrayer;
-          const isSunrise = prayer.name === "Sunrise";
+        {lastUpdated && (
+          <p className="text-[11px] text-slate-400 text-center lg:text-left">
+            Last synced {lastUpdated.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
+          </p>
+        )}
+      </div>
 
-          return (
-            <div
-              key={prayer.name}
-              className={`
-                group relative rounded-xl px-5 py-5 transition-all
-                ${isNext
-                  ? "bg-emerald-50 ring-1 ring-emerald-200"
-                  : "bg-white ring-1 ring-slate-100 hover:ring-slate-200"
-                }
-                ${isSunrise ? "opacity-50" : ""}
-              `}
-            >
-              <div className="flex items-center justify-between">
-                {/* Prayer name */}
-                <div className="flex items-center space-x-3 min-w-0">
-                  <div className={`w-1.5 h-8 rounded-full flex-shrink-0 ${
-                    isNext ? "bg-emerald-500" : isSunrise ? "bg-amber-300" : "bg-slate-200"
-                  }`} />
-                  <div className="min-w-0">
-                    <div className="flex items-center space-x-2">
-                      <p className={`font-semibold ${isNext ? "text-emerald-900" : "text-slate-900"}`}>
-                        {prayer.name}
-                      </p>
-                      {isNext && (
-                        <span className="inline-flex items-center text-[10px] font-bold tracking-wider text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded uppercase">
-                          Next
-                        </span>
-                      )}
+      {/* ════ RIGHT COLUMN: Full Schedule ════ */}
+      <div className="lg:col-span-7">
+        <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-200/60 overflow-hidden">
+          {/* Table Header */}
+          <div className="flex items-center justify-between px-5 sm:px-6 py-3 bg-slate-50 border-b border-slate-200/60">
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.12em]">Prayer</p>
+            <div className="flex items-center gap-6 sm:gap-10">
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.12em] w-[72px] text-right">Adhan</p>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.12em] w-[72px] text-right">Iqamah</p>
+            </div>
+          </div>
+
+          {/* Prayer Rows */}
+          <div className="divide-y divide-slate-100">
+            {prayers.map((prayer) => {
+              const isNext = prayer.name === nextPrayer;
+              const isSunrise = prayer.name === "Sunrise";
+
+              return (
+                <div
+                  key={prayer.name}
+                  className={`
+                    flex items-center justify-between px-5 sm:px-6 py-3.5 transition-colors
+                    ${isNext
+                      ? "bg-emerald-50/80 border-l-[3px] border-l-emerald-500"
+                      : "bg-white hover:bg-slate-50/50 border-l-[3px] border-l-transparent"
+                    }
+                    ${isSunrise ? "opacity-40" : ""}
+                  `}
+                >
+                  {/* Prayer name */}
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className={`text-sm font-semibold ${isNext ? "text-emerald-900" : "text-slate-900"}`}>
+                          {prayer.name}
+                        </p>
+                        {isNext && (
+                          <span className="text-[9px] font-bold tracking-wider text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded uppercase">
+                            Next
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-slate-400 font-arabic">{PRAYER_INFO[prayer.name].arabic}</p>
                     </div>
-                    <p className={`text-xs font-arabic ${isSunrise ? "text-slate-400" : "text-slate-400"}`}>
-                      {PRAYER_INFO[prayer.name].arabic}
-                    </p>
                   </div>
-                </div>
 
-                {/* Times */}
-                <div className="flex items-center space-x-6 sm:space-x-10 flex-shrink-0">
-                  <div className="text-right w-20">
-                    <p className={`text-base font-semibold tabular-nums ${
-                      isNext ? "text-emerald-800" : "text-slate-800"
-                    }`}>
-                      {prayer.adhan}
-                    </p>
-                    <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">Adhan</p>
-                  </div>
-                  <div className="text-right w-20">
-                    {prayer.iqamah ? (
-                      <>
-                        <p className={`text-base font-semibold tabular-nums ${
-                          isNext ? "text-emerald-800" : "text-slate-700"
+                  {/* Times */}
+                  <div className="flex items-center gap-6 sm:gap-10 shrink-0">
+                    <div className="w-[72px] text-right">
+                      <p className={`text-sm font-semibold tabular-nums ${
+                        isNext ? "text-emerald-800" : "text-slate-800"
+                      }`}>
+                        {prayer.adhan}
+                      </p>
+                    </div>
+                    <div className="w-[72px] text-right">
+                      {prayer.iqamah ? (
+                        <p className={`text-sm font-semibold tabular-nums ${
+                          isNext ? "text-emerald-700" : "text-slate-600"
                         }`}>
                           {prayer.iqamah}
                         </p>
-                        <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">Iqamah</p>
-                      </>
-                    ) : (
-                      <p className="text-sm text-slate-200">—</p>
-                    )}
+                      ) : (
+                        <p className="text-xs text-slate-200">—</p>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Jumu'ah Notice */}
-      <div className={`rounded-xl px-5 py-4 ${hasJummah ? "bg-emerald-50 ring-1 ring-emerald-100" : "bg-amber-50 ring-1 ring-amber-100"}`}>
-        <div className="flex items-center space-x-3">
-          <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${hasJummah ? "bg-emerald-100" : "bg-amber-100"}`}>
-            <span className="text-sm">{hasJummah ? "🕌" : "ℹ️"}</span>
+              );
+            })}
           </div>
-          <p className={`text-sm ${hasJummah ? "text-emerald-800" : "text-amber-800"}`}>
-            {hasJummah ? (
-              <>
-                <span className="font-semibold">Jumu&apos;ah:</span>{" "}{iqamah.jummah1}
-                {iqamah.jummah2 && iqamah.jummah2 !== "-" && <> · 2nd Khutbah: {iqamah.jummah2}</>}
-              </>
-            ) : (
-              <>
-                <span className="font-semibold">Jumu&apos;ah:</span>{" "}Not currently offered at this location.
-              </>
-            )}
-          </p>
         </div>
       </div>
-
-      {/* Footer meta */}
-      {lastUpdated && (
-        <p className="text-[11px] text-slate-300 text-center pt-1">
-          Last synced {lastUpdated.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
-        </p>
-      )}
     </div>
   );
 }
 
 function PrayerTimesSkeleton() {
   return (
-    <div className="space-y-5 animate-pulse">
-      <div className="flex items-end justify-between">
-        <div className="space-y-2">
-          <div className="h-6 bg-slate-200 rounded-lg w-44" />
-          <div className="h-4 bg-slate-100 rounded-lg w-56" />
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 animate-pulse">
+      {/* Left column skeleton */}
+      <div className="lg:col-span-5 flex flex-col gap-5">
+        <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-200/60 p-5 sm:p-6">
+          <div className="h-5 bg-slate-200 rounded w-40" />
+          <div className="h-4 bg-slate-100 rounded w-32 mt-2" />
         </div>
-        <div className="h-4 bg-slate-100 rounded-lg w-16" />
+        <div className="rounded-2xl bg-emerald-900/10 h-56" />
+        <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-200/60 p-4">
+          <div className="h-4 bg-slate-100 rounded w-48" />
+        </div>
       </div>
-      <div className="rounded-2xl bg-gradient-to-br from-slate-200 to-slate-100 h-48" />
-      <div className="grid gap-2.5">
-        {[...Array(6)].map((_, i) => (
-          <div key={i} className="rounded-xl bg-white ring-1 ring-slate-100 px-5 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-1.5 h-8 bg-slate-200 rounded-full" />
-                <div className="space-y-1.5">
-                  <div className="h-4 bg-slate-200 rounded w-16" />
-                  <div className="h-3 bg-slate-100 rounded w-10" />
-                </div>
+      {/* Right column skeleton */}
+      <div className="lg:col-span-7">
+        <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-200/60 overflow-hidden">
+          <div className="px-6 py-3 bg-slate-50 border-b border-slate-200/60">
+            <div className="h-3 bg-slate-200 rounded w-20" />
+          </div>
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="flex items-center justify-between px-6 py-3.5 border-b border-slate-100 last:border-0">
+              <div className="space-y-1.5">
+                <div className="h-4 bg-slate-200 rounded w-16" />
+                <div className="h-3 bg-slate-100 rounded w-10" />
               </div>
-              <div className="flex space-x-10">
-                <div className="space-y-1.5 w-20">
-                  <div className="h-4 bg-slate-200 rounded w-14 ml-auto" />
-                  <div className="h-2 bg-slate-100 rounded w-10 ml-auto" />
-                </div>
-                <div className="space-y-1.5 w-20">
-                  <div className="h-4 bg-slate-200 rounded w-14 ml-auto" />
-                  <div className="h-2 bg-slate-100 rounded w-10 ml-auto" />
-                </div>
+              <div className="flex gap-10">
+                <div className="w-[72px]"><div className="h-4 bg-slate-200 rounded w-14 ml-auto" /></div>
+                <div className="w-[72px]"><div className="h-4 bg-slate-200 rounded w-14 ml-auto" /></div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

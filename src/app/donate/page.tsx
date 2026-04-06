@@ -86,18 +86,18 @@ export default function DonatePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-emerald-800 to-emerald-900 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
+      <div className="bg-gradient-to-b from-emerald-950 via-emerald-900 to-emerald-800 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.06]">
           <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M20 0v40M0 20h40' stroke='%23ffffff' stroke-width='0.5' fill='none'/%3E%3C/g%3E%3C/svg%3E")`,
           }} />
         </div>
         <div className="relative mx-auto max-w-4xl px-6 py-20 sm:py-28 text-center">
-          <p className="text-emerald-200 text-lg font-medium mb-4 tracking-wide uppercase">Support Our Mission</p>
+          <p className="text-emerald-300 text-lg font-medium mb-4 tracking-wide uppercase">Support Our Mission</p>
           <h1 className="text-4xl sm:text-5xl font-bold text-white mb-6">
             Your Generosity Makes a Difference
           </h1>
-          <p className="text-xl text-emerald-100 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-emerald-100/70 max-w-2xl mx-auto leading-relaxed">
             Your donations help us maintain our facilities, expand our programs, and serve the Muslim community in Ankeny.
           </p>
         </div>

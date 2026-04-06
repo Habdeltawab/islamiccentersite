@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import PrayerTimesDisplay from "./PrayerTimesDisplay";
 import {
   fetchPrayerTimes,
@@ -27,45 +28,63 @@ export default async function PrayerTimesPage() {
   const prayerData = await getPrayerTimes();
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Hero */}
-      <div className="bg-gradient-to-br from-emerald-800 to-emerald-900 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }} />
+    <div className="bg-slate-50">
+      {/* ── Compact Hero ── */}
+      <section className="bg-gradient-to-b from-emerald-950 via-emerald-900 to-emerald-800 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.06]">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M20 0v40M0 20h40' stroke='%23ffffff' stroke-width='0.5' fill='none'/%3E%3C/g%3E%3C/svg%3E")`,
+            }}
+          />
         </div>
-        <div className="relative mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
-          <p className="text-emerald-300 text-sm font-semibold uppercase tracking-widest mb-2">
-            {MASJID_INFO.city}, {MASJID_INFO.state}
-          </p>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
-            Prayer Times
-          </h1>
+        <div className="relative mx-auto max-w-6xl px-6 sm:px-8 pt-12 sm:pt-16 pb-20 sm:pb-24">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold text-emerald-300 uppercase tracking-[0.2em] mb-3">
+                {MASJID_INFO.city}, {MASJID_INFO.state}
+              </p>
+              <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
+                Prayer Times
+              </h1>
+            </div>
+            <p className="hidden sm:block text-sm text-emerald-200/50">
+              Updated automatically via MasjidAl
+            </p>
+          </div>
         </div>
+      </section>
+
+      {/* ── Main Content ── */}
+      <div className="relative z-10 -mt-12 mx-auto max-w-6xl px-6 sm:px-8 pb-16">
+        <PrayerTimesDisplay initialData={prayerData} />
       </div>
 
-      {/* Main Content */}
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 mt-8">
-        <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-200/60 p-6 sm:p-8">
-          <PrayerTimesDisplay initialData={prayerData} />
-        </div>
-
-        {/* Footer */}
-        <div className="mt-8 pb-10">
-          <p className="text-xs text-slate-400 text-center">
-            Prayer times provided by{" "}
-            <a
-              href="https://masjidal.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-slate-500 hover:text-slate-700 underline underline-offset-2 transition-colors"
+      {/* ── CTA ── */}
+      <section className="border-t border-slate-200 bg-white">
+        <div className="mx-auto max-w-6xl px-6 sm:px-8 py-12 sm:py-14">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+            <div>
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
+                Support Our Community
+              </h2>
+              <p className="mt-1 text-slate-500 text-sm max-w-md">
+                Your generosity helps us maintain our center and expand programs.
+              </p>
+            </div>
+            <Link
+              href="/donate"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-lg hover:bg-emerald-700 shadow-sm hover:shadow-md transition-all shrink-0"
             >
-              MasjidAl
-            </a>
-          </p>
+              Make a Donation
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
+              </svg>
+            </Link>
+          </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
